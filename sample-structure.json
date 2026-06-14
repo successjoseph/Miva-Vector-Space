@@ -1,0 +1,136 @@
+{
+  
+  "Contacts": {
+    "name": "Contact Details",
+    "description": "Important contacts across the university",
+    "items": [
+      {
+        "id": "con-001",
+        "title": "CS Department Representative",
+        "content": "Chukwuemeka Nwosu | Email: c.nwosu@miva.edu.ng | Phone: +234-800-123-4567 | Available Mon-Fri 9am-5pm for student inquiries.",
+        "type": "rep-contact",
+        "category": "Contacts",
+        "subcategory": "Department Rep",
+        "author": "admin@miva.edu.ng",
+        "createdAt": "2025-08-20T09:00:00Z",
+        "updatedAt": "2025-08-20T09:00:00Z",
+        "tags": ["representative", "computer-science"]
+      },
+      {
+        "id": "con-002",
+        "title": "Student Affairs Office",
+        "content": "General inquiries: studentaffairs@miva.edu.ng | Location: Admin Building, Room 204 | Hours: 8am-6pm weekdays. Handles enrollment, ID cards, and grievances.",
+        "type": "admin-contact",
+        "category": "Contacts",
+        "subcategory": "Admin",
+        "author": "admin@miva.edu.ng",
+        "createdAt": "2025-08-15T09:00:00Z",
+        "updatedAt": "2025-08-15T09:00:00Z",
+        "tags": ["admin", "student-affairs", "enrollment"]
+      }
+    ]
+  },
+  
+  "Resources": {
+    "name": "Learning Resources",
+    "description": "Helpful learning materials, videos, tools, and references",
+    "items": [
+      {
+        "id": "res-001",
+        "title": "freeCodeCamp - Full Stack Development",
+        "content": "Free comprehensive curriculum covering HTML, CSS, JavaScript, Node.js, React, and more. Great for self-paced learning alongside coursework. https://www.freecodecamp.org",
+        "type": "channel-link",
+        "category": "Resources",
+        "subcategory": "Web Development",
+        "author": "student@miva.edu.ng",
+        "createdAt": "2025-09-10T08:00:00Z",
+        "updatedAt": "2025-09-10T08:00:00Z",
+        "tags": ["web-development", "free", "full-stack", "javascript"]
+      },
+      {
+        "id": "res-002",
+        "title": "3Blue1Brown - Essence of Linear Algebra",
+        "content": "Excellent YouTube series that builds geometric intuition for linear algebra concepts. Perfect companion for MTH 201. Visual and engaging explanations.",
+        "type": "video-link",
+        "category": "Resources",
+        "subcategory": "Mathematics",
+        "author": "student@miva.edu.ng",
+        "createdAt": "2025-09-12T08:00:00Z",
+        "updatedAt": "2025-09-12T08:00:00Z",
+        "tags": ["linear-algebra", "video", "youtube", "visualization"]
+      },
+      {
+        "id": "res-003",
+        "title": "GitHub Student Developer Pack",
+        "content": "Free access to premium developer tools for students. Includes GitHub Pro, JetBrains IDEs, DigitalOcean credits, and more. Apply with your @miva.edu.ng email.",
+        "type": "tool",
+        "category": "Resources",
+        "subcategory": "Developer Tools",
+        "author": "student@miva.edu.ng",
+        "createdAt": "2025-08-25T08:00:00Z",
+        "updatedAt": "2025-08-25T08:00:00Z",
+        "tags": ["github", "developer-tools", "free", "student-discount"]
+      }
+    ]
+  },
+  "News": {
+    "name": "Department & School News",
+    "description": "Latest announcements, events, and updates",
+    "items": [
+      {
+        "id": "news-001",
+        "title": "MIVA Tech Innovation Week 2025",
+        "content": "Join us for a week of workshops, hackathons, and guest speakers from top tech companies. November 20-24, 2025. Register at the Student Affairs portal. Prizes for best projects!",
+        "type": "event",
+        "category": "News",
+        "subcategory": "School-wide",
+        "author": "admin@miva.edu.ng",
+        "createdAt": "2025-10-30T08:00:00Z",
+        "updatedAt": "2025-10-30T08:00:00Z",
+        "tags": ["hackathon", "innovation", "event", "tech-week"]
+      },
+      {
+        "id": "news-002",
+        "title": "New Computer Lab Now Open",
+        "content": "The new 50-seat computer lab in Building C is now operational. Features: High-spec workstations, dual monitors, 24/7 access with student ID. Book slots through the LMS.",
+        "type": "announcement",
+        "category": "News",
+        "subcategory": "Department",
+        "author": "admin@miva.edu.ng",
+        "createdAt": "2025-11-01T08:00:00Z",
+        "updatedAt": "2025-11-01T08:00:00Z",
+        "tags": ["lab", "facilities", "computer-lab"]
+      }
+    ]
+  },
+  "Ideas": {
+    "name": "Suggestions & Ideas",
+    "description": "Community suggestions for improvement and innovation",
+    "items": [
+      {
+        "id": "idea-001",
+        "title": "Peer Tutoring Program",
+        "content": "Propose a structured peer tutoring system where senior students mentor juniors in challenging courses. Could use a booking platform. Would improve retention and build community.",
+        "type": "improvement",
+        "category": "Ideas",
+        "subcategory": "Academic",
+        "author": "student@miva.edu.ng",
+        "createdAt": "2025-10-05T08:00:00Z",
+        "updatedAt": "2025-10-05T08:00:00Z",
+        "tags": ["tutoring", "mentorship", "community", "academic-support"]
+      },
+      {
+        "id": "idea-002",
+        "title": "Campus Recycling Initiative",
+        "content": "Introduce recycling bins across campus with clear labeling. Partner with local recycling companies. Student volunteers can manage collection. Good for sustainability goals.",
+        "type": "innovation",
+        "category": "Ideas",
+        "subcategory": "Infrastructure",
+        "author": "student@miva.edu.ng",
+        "createdAt": "2025-10-08T08:00:00Z",
+        "updatedAt": "2025-10-08T08:00:00Z",
+        "tags": ["sustainability", "recycling", "campus", "environment"]
+      }
+    ]
+  }
+}

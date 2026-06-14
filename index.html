@@ -230,11 +230,21 @@ let firebaseApp=null,auth=null,db=null,firebaseReady=false;
 const fbConfig={apiKey:"AIzaSyBld8IlC0Cgs9b98mAQ8gDIf35snNcaqd8",authDomain:"pdf-scraper-ext.firebaseapp.com",projectId:"pdf-scraper-ext",storageBucket:"pdf-scraper-ext.firebasestorage.app",messagingSenderId:"1001266216982",appId:"1:1001266216982:web:1bbe70117bb1ce1cc3b537"};
 try{
   if(!fbConfig.apiKey.startsWith('YOUR')){
-    const{initializeApp}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const{initializeApp:initApp}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
     const{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut:fbSignOut,onAuthStateChanged}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
     const{getFirestore,collection,getDocs,addDoc,Timestamp}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-    firebaseApp=initializeApp(fbConfig);auth=getAuth(firebaseApp);db=getFirestore(firebaseApp);firebaseReady=true;
+    const{initializeAppCheck,ReCaptchaV3Provider}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js');
+    
+    firebaseApp=initApp(fbConfig);auth=getAuth(firebaseApp);db=getFirestore(firebaseApp);firebaseReady=true;
     window._fb={createUserWithEmailAndPassword,signInWithEmailAndPassword,fbSignOut,onAuthStateChanged,collection,getDocs,addDoc,Timestamp};
+
+    const rec_key="6LckiR8tAAAAAIBYN6zJeSsTvTRswS6j2xs3CVb3";
+    if(rec_key&&!rec_key.startsWith('YOUR')){
+      initializeAppCheck(firebaseApp,{
+        provider:new ReCaptchaV3Provider(rec_key),
+        isTokenAutoRefreshEnabled:true
+      });
+    }
   }
 }catch(e){console.warn('Firebase not configured:',e)}
 

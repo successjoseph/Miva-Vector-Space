@@ -588,7 +588,10 @@ $('entry-form').onsubmit=async e=>{
   if(!S.user)return notify('Please sign in first','error');
   const entry={id:'u'+Date.now(),title,content,type:typ,category:cat,subcategory:sub,author:S.user.email,createdAt:new Date().toISOString().slice(0,10),tags};
   if(firebaseReady&&db){try{await window._fb.addDoc(window._fb.collection(db,'miva_entries'),entry)}catch(er){notify('Firestore error: '+er.message,'error');return}}
-  S.entries.push(entry);buildNodes();notify('Entry published! 🎉');$('entry-form').reset();$('f-title-count').textContent='0';$('f-content-count').textContent='0';closePanel('panel-form');
+  S.entries.push(entry);
+  saveCache(S.entries);
+  buildNodes();
+  notify('Entry published! 🎉');$('entry-form').reset();$('f-title-count').textContent='0';$('f-content-count').textContent='0';closePanel('panel-form');
 };
 
 /* ═══════════════════════════════════════════
@@ -598,10 +601,31 @@ const CACHE_KEY='miva_knowledge_cache',STALE=3*60*60*1000;
 function loadCache(){try{const c=JSON.parse(localStorage.getItem(CACHE_KEY));if(c&&Date.now()-c.timestamp<STALE&&c.data?.length)return c.data}catch(e){}return null}
 function saveCache(data){try{localStorage.setItem(CACHE_KEY,JSON.stringify({data,timestamp:Date.now()}))}catch(e){}}
 async function loadData(){
-  let data=loadCache();
-  if(!data&&firebaseReady&&db){try{const snap=await window._fb.getDocs(window._fb.collection(db,'miva_entries'));data=[];snap.forEach(d=>{const o=d.data();o.id=d.id;data.push(o)});if(data.length)saveCache(data)}catch(e){console.warn('Firestore fetch error:',e)}}
-  if(!data||!data.length)data=SAMPLE;
-  S.entries=data;buildNodes();
+  let cached=loadCache();
+  if(cached&&cached.length){
+    S.entries=cached;
+    buildNodes();
+  }
+  
+  if(firebaseReady&&db){
+    try{
+      const snap=await window._fb.getDocs(window._fb.collection(db,'miva_entries'));
+      const fresh=[];
+      snap.forEach(d=>{const o=d.data();o.id=d.id;fresh.push(o)});
+      if(fresh.length){
+        saveCache(fresh);
+        S.entries=fresh;
+        buildNodes();
+      }
+    }catch(e){
+      console.warn('Firestore fetch error:',e);
+    }
+  }
+  
+  if(!S.entries||!S.entries.length){
+    S.entries=SAMPLE;
+    buildNodes();
+  }
 }
 
 /* ═══════════════════════════════════════════

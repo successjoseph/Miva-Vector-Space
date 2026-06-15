@@ -259,57 +259,7 @@ const ETYPES={Faculty:['course-code','lecturer-email','department-info','other']
 /* ═══════════════════════════════════════════
    SAMPLE DATA
    ═══════════════════════════════════════════ */
-const SAMPLE=[
-{id:'s1',title:'CSC 101 — Intro to CS',content:'Fundamental concepts of computing, algorithms, and programming basics. Taught by Dr. Adebayo.',type:'course-code',category:'Faculty',subcategory:'Computer Science',author:'admin@miva.edu.ng',createdAt:'2025-09-01',tags:['programming','algorithms']},
-{id:'s2',title:'MTH 201 — Linear Algebra',content:'Vector spaces, linear transformations, matrices, determinants, eigenvalues.',type:'course-code',category:'Faculty',subcategory:'Mathematics',author:'admin@miva.edu.ng',createdAt:'2025-09-01',tags:['math','linear-algebra']},
-{id:'s2',title:'MTH 201 — Linear Algebra',content:'Vector spaces, linear transformations, matrices, determinants, eigenvalues.',type:'course-code',category:'Faculty',subcategory:'Mathematics',author:'admin@miva.edu.ng',createdAt:'2025-09-01',tags:['math','linear-algebra']},
-{id:'s2',title:'MTH 201 — Linear Algebra',content:'Vector spaces, linear transformations, matrices, determinants, eigenvalues.',type:'course-code',category:'Faculty',subcategory:'Mathematics',author:'admin@miva.edu.ng',createdAt:'2025-09-01',tags:['math','linear-algebra']},
-{id:'s2',title:'MTH 201 — Linear Algebra',content:'Vector spaces, linear transformations, matrices, determinants, eigenvalues.',type:'course-code',category:'Faculty',subcategory:'Mathematics',author:'admin@miva.edu.ng',createdAt:'2025-09-01',tags:['math','linear-algebra']},
-{id:'s2',title:'MTH 201 — Linear Algebra',content:'Vector spaces, linear transformations, matrices, determinants, eigenvalues.',type:'course-code',category:'Faculty',subcategory:'Mathematics',author:'admin@miva.edu.ng',createdAt:'2025-09-01',tags:['math','linear-algebra']},
-
-{id:'s3',title:'Dr. Okonkwo — Software Eng',content:'Email: okonkwo@miva.edu.ng | Office Hours: Mon/Wed 2-4pm | Agile, system design.',type:'lecturer-email',category:'Faculty',subcategory:'Computer Science',author:'admin@miva.edu.ng',createdAt:'2025-09-05',tags:['lecturer']},
-{id:'s4',title:'CS Department Rep',content:'Chukwuemeka Nwosu | c.nwosu@miva.edu.ng | Mon-Fri 9am-5pm.',type:'rep-contact',category:'Contacts',subcategory:'Department Rep',author:'admin@miva.edu.ng',createdAt:'2025-08-20',tags:['contact']},
-{id:'s4',title:'CS Department Rep',content:'Chukwuemeka Nwosu | c.nwosu@miva.edu.ng | Mon-Fri 9am-5pm.',type:'rep-contact',category:'Contacts',subcategory:'Department Rep',author:'admin@miva.edu.ng',createdAt:'2025-08-20',tags:['contact']},
-{id:'s4',title:'CS Department Rep',content:'Chukwuemeka Nwosu | c.nwosu@miva.edu.ng | Mon-Fri 9am-5pm.',type:'rep-contact',category:'Contacts',subcategory:'Department Rep',author:'admin@miva.edu.ng',createdAt:'2025-08-20',tags:['contact']},
-{id:'s4',title:'CS Department Rep',content:'Chukwuemeka Nwosu | c.nwosu@miva.edu.ng | Mon-Fri 9am-5pm.',type:'rep-contact',category:'Contacts',subcategory:'Department Rep',author:'admin@miva.edu.ng',createdAt:'2025-08-20',tags:['contact']},
-{id:'s4',title:'CS Department Rep',content:'Chukwuemeka Nwosu | c.nwosu@miva.edu.ng | Mon-Fri 9am-5pm.',type:'rep-contact',category:'Contacts',subcategory:'Department Rep',author:'admin@miva.edu.ng',createdAt:'2025-08-20',tags:['contact']},
-{id:'s4',title:'CS Department Rep',content:'Chukwuemeka Nwosu | c.nwosu@miva.edu.ng | Mon-Fri 9am-5pm.',type:'rep-contact',category:'Contacts',subcategory:'Department Rep',author:'admin@miva.edu.ng',createdAt:'2025-08-20',tags:['contact']},
-
-{id:'s5',title:'Student Affairs Office',content:'studentaffairs@miva.edu.ng | Admin Building, Room 204 | 8am-6pm.',type:'admin-contact',category:'Contacts',subcategory:'Admin',author:'admin@miva.edu.ng',createdAt:'2025-08-15',tags:['admin']},
-{id:'s6',title:'CSC 101 Midterm',content:'Oct 15, 10am-12pm | Hall A | Calculator allowed. Chapters 1-6.',type:'exam-info',category:'Exams',subcategory:'CSC Courses',author:'academic@miva.edu.ng',createdAt:'2025-10-01',tags:['midterm']},
-{id:'s6',title:'CSC 101 Midterm',content:'Oct 15, 10am-12pm | Hall A | Calculator allowed. Chapters 1-6.',type:'exam-info',category:'Exams',subcategory:'CSC Courses',author:'academic@miva.edu.ng',createdAt:'2025-10-01',tags:['midterm']},
-{id:'s6',title:'CSC 101 Midterm',content:'Oct 15, 10am-12pm | Hall A | Calculator allowed. Chapters 1-6.',type:'exam-info',category:'Exams',subcategory:'CSC Courses',author:'academic@miva.edu.ng',createdAt:'2025-10-01',tags:['midterm']},
-{id:'s6',title:'CSC 101 Midterm',content:'Oct 15, 10am-12pm | Hall A | Calculator allowed. Chapters 1-6.',type:'exam-info',category:'Exams',subcategory:'CSC Courses',author:'academic@miva.edu.ng',createdAt:'2025-10-01',tags:['midterm']},
-{id:'s6',title:'CSC 101 Midterm',content:'Oct 15, 10am-12pm | Hall A | Calculator allowed. Chapters 1-6.',type:'exam-info',category:'Exams',subcategory:'CSC Courses',author:'academic@miva.edu.ng',createdAt:'2025-10-01',tags:['midterm']},
-{id:'s6',title:'CSC 101 Midterm',content:'Oct 15, 10am-12pm | Hall A | Calculator allowed. Chapters 1-6.',type:'exam-info',category:'Exams',subcategory:'CSC Courses',author:'academic@miva.edu.ng',createdAt:'2025-10-01',tags:['midterm']},
-{id:'s6',title:'CSC 101 Midterm',content:'Oct 15, 10am-12pm | Hall A | Calculator allowed. Chapters 1-6.',type:'exam-info',category:'Exams',subcategory:'CSC Courses',author:'academic@miva.edu.ng',createdAt:'2025-10-01',tags:['midterm']},
-{id:'s7',title:'MTH 201 Final',content:'Dec 10, 2pm-5pm | Hall B | Formula sheet provided. Comprehensive.',type:'exam-info',category:'Exams',subcategory:'MTH Courses',author:'academic@miva.edu.ng',createdAt:'2025-11-15',tags:['final']},
-{id:'s8',title:'Capstone — AI Chatbot',content:'AI chatbot for student services. Team of 4-5. Deadline: Mar 30, 2026.',type:'project',category:'Projects',subcategory:'Computer Science',author:'student@miva.edu.ng',createdAt:'2025-09-20',tags:['capstone','AI']},
-{id:'s9',title:'DB Design — Library System',content:'Relational database for university library. ER diagrams, 3NF, SQL DDL.',type:'assignment',category:'Projects',subcategory:'Computer Science',author:'student@miva.edu.ng',createdAt:'2025-10-10',tags:['database','SQL']},
-{id:'s9',title:'DB Design — Library System',content:'Relational database for university library. ER diagrams, 3NF, SQL DDL.',type:'assignment',category:'Projects',subcategory:'Computer Science',author:'student@miva.edu.ng',createdAt:'2025-10-10',tags:['database','SQL']},
-{id:'s9',title:'DB Design — Library System',content:'Relational database for university library. ER diagrams, 3NF, SQL DDL.',type:'assignment',category:'Projects',subcategory:'Computer Science',author:'student@miva.edu.ng',createdAt:'2025-10-10',tags:['database','SQL']},
-{id:'s9',title:'DB Design — Library System',content:'Relational database for university library. ER diagrams, 3NF, SQL DDL.',type:'assignment',category:'Projects',subcategory:'Computer Science',author:'student@miva.edu.ng',createdAt:'2025-10-10',tags:['database','SQL']},
-{id:'s9',title:'DB Design — Library System',content:'Relational database for university library. ER diagrams, 3NF, SQL DDL.',type:'assignment',category:'Projects',subcategory:'Computer Science',author:'student@miva.edu.ng',createdAt:'2025-10-10',tags:['database','SQL']},
-{id:'s10',title:'freeCodeCamp',content:'Free curriculum: HTML, CSS, JS, Node.js, React. freecodecamp.org',type:'channel-link',category:'Resources',subcategory:'Web Development',author:'student@miva.edu.ng',createdAt:'2025-09-10',tags:['web-dev','free']},
-{id:'s11',title:'3Blue1Brown — Linear Algebra',content:'YouTube series building geometric intuition for linear algebra.',type:'video-link',category:'Resources',subcategory:'Mathematics',author:'student@miva.edu.ng',createdAt:'2025-09-12',tags:['video','math']},
-{id:'s11',title:'3Blue1Brown — Linear Algebra',content:'YouTube series building geometric intuition for linear algebra.',type:'video-link',category:'Resources',subcategory:'Mathematics',author:'student@miva.edu.ng',createdAt:'2025-09-12',tags:['video','math']},
-{id:'s11',title:'3Blue1Brown — Linear Algebra',content:'YouTube series building geometric intuition for linear algebra.',type:'video-link',category:'Resources',subcategory:'Mathematics',author:'student@miva.edu.ng',createdAt:'2025-09-12',tags:['video','math']},
-{id:'s11',title:'3Blue1Brown — Linear Algebra',content:'YouTube series building geometric intuition for linear algebra.',type:'video-link',category:'Resources',subcategory:'Mathematics',author:'student@miva.edu.ng',createdAt:'2025-09-12',tags:['video','math']},
-
-{id:'s12',title:'GitHub Student Dev Pack',content:'Free dev tools for students: GitHub Pro, JetBrains, DigitalOcean.',type:'tool',category:'Resources',subcategory:'Developer Tools',author:'student@miva.edu.ng',createdAt:'2025-08-25',tags:['github','tools']},
-{id:'s13',title:'Tech Innovation Week 2025',content:'Workshops, hackathons, speakers. Nov 20-24. Register at Student Affairs.',type:'event',category:'News',subcategory:'School-wide',author:'admin@miva.edu.ng',createdAt:'2025-10-30',tags:['hackathon','event']},
-{id:'s14',title:'New Computer Lab Open',content:'50-seat lab in Building C. High-spec workstations, 24/7 access.',type:'announcement',category:'News',subcategory:'Department',author:'admin@miva.edu.ng',createdAt:'2025-11-01',tags:['lab','facilities']},
-{id:'s14',title:'New Computer Lab Open',content:'50-seat lab in Building C. High-spec workstations, 24/7 access.',type:'announcement',category:'News',subcategory:'Department',author:'admin@miva.edu.ng',createdAt:'2025-11-01',tags:['lab','facilities']},
-{id:'s14',title:'New Computer Lab Open',content:'50-seat lab in Building C. High-spec workstations, 24/7 access.',type:'announcement',category:'News',subcategory:'Department',author:'admin@miva.edu.ng',createdAt:'2025-11-01',tags:['lab','facilities']},
-{id:'s14',title:'New Computer Lab Open',content:'50-seat lab in Building C. High-spec workstations, 24/7 access.',type:'announcement',category:'News',subcategory:'Department',author:'admin@miva.edu.ng',createdAt:'2025-11-01',tags:['lab','facilities']},
-{id:'s15',title:'Peer Tutoring Program',content:'Senior students mentor juniors in challenging courses. Booking platform idea.',type:'improvement',category:'Ideas',subcategory:'Academic',author:'student@miva.edu.ng',createdAt:'2025-10-05',tags:['tutoring','mentorship']},
-{id:'s16',title:'Campus Recycling Initiative',content:'Recycling bins across campus with labeling. Partner with local companies.',type:'innovation',category:'Ideas',subcategory:'Infrastructure',author:'student@miva.edu.ng',createdAt:'2025-10-08',tags:['sustainability']},
-{id:'s16',title:'Campus Recycling Initiative',content:'Recycling bins across campus with labeling. Partner with local companies.',type:'innovation',category:'Ideas',subcategory:'Infrastructure',author:'student@miva.edu.ng',createdAt:'2025-10-08',tags:['sustainability']},
-{id:'s16',title:'Campus Recycling Initiative',content:'Recycling bins across campus with labeling. Partner with local companies.',type:'innovation',category:'Ideas',subcategory:'Infrastructure',author:'student@miva.edu.ng',createdAt:'2025-10-08',tags:['sustainability']},
-{id:'s16',title:'Campus Recycling Initiative',content:'Recycling bins across campus with labeling. Partner with local companies.',type:'innovation',category:'Ideas',subcategory:'Infrastructure',author:'student@miva.edu.ng',createdAt:'2025-10-08',tags:['sustainability']},
-{id:'s16',title:'Campus Recycling Initiative',content:'Recycling bins across campus with labeling. Partner with local companies.',type:'innovation',category:'Ideas',subcategory:'Infrastructure',author:'student@miva.edu.ng',createdAt:'2025-10-08',tags:['sustainability']}
-
-];
+const SAMPLE=[];
 
 /* ═══════════════════════════════════════════
    STATE
@@ -609,7 +559,9 @@ async function loadData(){
   
   if(firebaseReady&&db){
     try{
-      const snap=await window._fb.getDocs(window._fb.collection(db,'miva_entries'));
+      const fetchPromise=window._fb.getDocs(window._fb.collection(db,'miva_entries'));
+      const timeoutPromise=new Promise((_,reject)=>setTimeout(()=>reject(new Error('Timeout')),5000));
+      const snap=await Promise.race([fetchPromise,timeoutPromise]);
       const fresh=[];
       snap.forEach(d=>{const o=d.data();o.id=d.id;fresh.push(o)});
       if(fresh.length){
@@ -618,11 +570,11 @@ async function loadData(){
         buildNodes();
       }
     }catch(e){
-      console.warn('Firestore fetch error:',e);
+      console.warn('Firestore load revalidation failed:',e);
     }
   }
   
-  if(!S.entries||!S.entries.length){
+  if((!S.entries||!S.entries.length)&&!fbConfig.apiKey.startsWith('AIzaS')){
     S.entries=SAMPLE;
     buildNodes();
   }

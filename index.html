@@ -448,12 +448,41 @@ function obfuscateContent(text){
   return res;
 }
 
+function renderMarkdown(text){
+  if(!text)return '';
+  // 1. Escape basic HTML tags to prevent arbitrary injection
+  let temp=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  
+  // 2. Apply phone and email obfuscation
+  temp=obfuscateContent(temp);
+  
+  // 3. Render Markdown syntax
+  // Bold: **text**
+  temp=temp.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  // Italic: *text*
+  temp=temp.replace(/\*([^*]+)\*/g,'<em>$1</em>');
+  // Markdown links: [Label](URL)
+  temp=temp.replace(/\[([^\]]+)\]\(([^)]+)\)/g,(m,label,url)=>{
+    const rawUrl=url.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+    return `<a href="${rawUrl}" target="_blank" style="color:var(--primary);text-decoration:underline">${label}</a>`;
+  });
+  // Auto-link absolute URLs (not inside existing href tags)
+  temp=temp.replace(/(?<!href=")(https?:\/\/[^\s<]+)/g,m=>{
+    const rawUrl=m.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+    return `<a href="${rawUrl}" target="_blank" style="color:var(--primary);text-decoration:underline">${m}</a>`;
+  });
+  
+  // 4. Convert newlines to breaks
+  temp=temp.replace(/\n/g,'<br>');
+  return temp;
+}
+
 function showDetail(n){
   S.selected=n;const d=n.data;const c=CATEGORIES[d.category]?.color||'#888';
   $('detail-body').innerHTML=`
     <div class="panel-title" style="margin-top:8px">${CATEGORIES[d.category]?.icon||''} ${obfuscateContent(d.title)}</div>
     <div><span class="detail-badge" style="background:${c}33;color:${c}">${d.category}</span><span class="detail-badge" style="background:rgba(255,255,255,.06);color:var(--text-dim)">${d.subcategory||''}</span><span class="detail-badge" style="background:rgba(255,255,255,.06);color:var(--text-dim)">${d.type}</span></div>
-    <div class="detail-content">${obfuscateContent(d.content)}</div>
+    <div class="detail-content" style="white-space:normal;word-break:break-word">${renderMarkdown(d.content)}</div>
     <div class="detail-meta">👤 ${obfuscateContent(d.author||'Anonymous')}<br>📅 ${d.createdAt||'N/A'}${d.tags?.length?'<br>🏷 '+d.tags.join(', '):''}</div>
     <div class="warning-box" style="margin-top:24px">⚠️ <strong>Notice:</strong> Please do not submit phone numbers or private data. Report any exposures to <a href="mailto:successjoseph67@gmail.com">successjoseph67@gmail.com</a> for removal.</div>`;
   $('panel-detail').classList.add('open');$('panel-notepad').classList.remove('open');

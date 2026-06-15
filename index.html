@@ -160,7 +160,18 @@ canvas#main-canvas.grabbing{cursor:grabbing}
       <div class="form-group"><label class="form-label">Subcategory *</label><select class="form-select" id="f-subcategory" required><option value="">Select subcategory...</option></select></div>
       <div class="form-group"><label class="form-label">Type *</label><select class="form-select" id="f-type" required><option value="">Select type...</option></select></div>
       <div class="form-group"><label class="form-label">Title *</label><input class="form-input" id="f-title" maxlength="150" placeholder="Entry title..." required><div class="char-count"><span id="f-title-count">0</span>/150</div></div>
-      <div class="form-group"><label class="form-label">Content *</label><textarea class="form-textarea" id="f-content" maxlength="2000" placeholder="Full description..." rows="5" required></textarea><div class="char-count"><span id="f-content-count">0</span>/2000</div></div>
+      <div class="form-group">
+        <label class="form-label">Content *</label>
+        <div class="editor-toolbar" style="display:flex;gap:6px;margin-bottom:6px">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-format-bold" style="padding:4px 10px;font-weight:bold;min-height:auto" title="Bold">B</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-format-italic" style="padding:4px 10px;font-style:italic;min-height:auto" title="Italic">I</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-format-link" style="padding:4px 10px;min-height:auto" title="Link">🔗</button>
+        </div>
+        <textarea class="form-textarea" id="f-content" maxlength="2000" placeholder="Full description..." rows="5" required></textarea>
+        <div class="char-count"><span id="f-content-count">0</span>/2000</div>
+        <div class="form-label" style="margin-top:10px">Live Preview</div>
+        <div class="preview-box" id="f-preview" style="background:rgba(255,255,255,.03);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:10px 14px;min-height:70px;max-height:150px;overflow-y:auto;font-size:13px;color:rgba(255,255,255,.85);word-break:break-word"></div>
+      </div>
       <div class="form-group"><label class="form-label">Tags</label><input class="form-input" id="f-tags" placeholder="Comma-separated tags..."></div>
       <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">Publish Entry</button>
     </form>
@@ -530,7 +541,30 @@ function populateSelect(sel,opts){sel.innerHTML='<option value="">Select...</opt
 populateSelect($('f-category'),CAT_KEYS);
 $('f-category').onchange=()=>{const c=$('f-category').value;populateSelect($('f-subcategory'),SUBCATS[c]||[]);populateSelect($('f-type'),ETYPES[c]||[])};
 $('f-title').oninput=()=>$('f-title-count').textContent=$('f-title').value.length;
-$('f-content').oninput=()=>$('f-content-count').textContent=$('f-content').value.length;
+$('f-content').oninput=()=>{
+  $('f-content-count').textContent=$('f-content').value.length;
+  $('f-preview').innerHTML=renderMarkdown($('f-content').value);
+};
+const insertFormat=(before,after)=>{
+  const txt=$('f-content');
+  const start=txt.selectionStart;
+  const end=txt.selectionEnd;
+  const val=txt.value;
+  const selected=val.slice(start,end);
+  const replacement=before+selected+after;
+  txt.value=val.slice(0,start)+replacement+val.slice(end);
+  txt.selectionStart=start+before.length;
+  txt.selectionEnd=txt.selectionStart+selected.length;
+  txt.focus();
+  $('f-content-count').textContent=txt.value.length;
+  $('f-preview').innerHTML=renderMarkdown(txt.value);
+};
+$('btn-format-bold').onclick=()=>insertFormat('**','**');
+$('btn-format-italic').onclick=()=>insertFormat('*','*');
+$('btn-format-link').onclick=()=>{
+  const url=prompt('Enter URL:','https://');
+  if(url)insertFormat('[',`](${url})`);
+};
 $('entry-form').onsubmit=async e=>{
   e.preventDefault();
   const cat=$('f-category').value,sub=$('f-subcategory').value,typ=$('f-type').value,title=$('f-title').value.trim(),content=$('f-content').value.trim(),tags=$('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
@@ -541,7 +575,7 @@ $('entry-form').onsubmit=async e=>{
   S.entries.push(entry);
   saveCache(S.entries);
   buildNodes();
-  notify('Entry published! 🎉');$('entry-form').reset();$('f-title-count').textContent='0';$('f-content-count').textContent='0';closePanel('panel-form');
+  notify('Entry published! 🎉');$('entry-form').reset();$('f-title-count').textContent='0';$('f-content-count').textContent='0';$('f-preview').innerHTML='';closePanel('panel-form');
 };
 
 /* ═══════════════════════════════════════════

@@ -48,16 +48,22 @@ To ensure guest users can read entries securely without registering, but restric
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    
+
     // MIVA Vector Space Rules
     match /miva_entries/{entryId} {
       // Anyone (guests/public) can view the space entries
       allow read: if true;
-      
-      // Only signed-in users can add new entries
-      allow create: if request.auth != null;
-      
+
+      // Only signed-in @miva.edu.ng / @miva.university users can add entries,
+      // and only with a well-formed, size-limited payload matching their own email
+      allow create: if request.auth != null
+        && request.auth.token.email.matches('.*@miva\\.edu\\.ng$|.*@miva\\.university$')
+        && request.resource.data.keys().hasAll(['title','content','type','category','subcategory','author','createdAt','tags'])
+        && request.resource.data.title is string && request.resource.data.title.size() <= 150
+        && request.resource.data.content is string && request.resource.data.content.size() <= 2000
+        && request.resource.data.tags is list && request.resource.data.tags.size() <= 10
+        && request.resource.data.author == request.auth.token.email;
+
       // Prevent anyone (even authenticated users) from editing or deleting entries
       allow update, delete: if false;
     }

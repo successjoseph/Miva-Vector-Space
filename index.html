@@ -4,12 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>MIVA Knowledge Vector Space</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://www.grecaptcha.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com; img-src 'self' data: https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://www.grecaptcha.net; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com; img-src 'self' data: https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none';">
 <script>if(self!==top){top.location=self.location}</script>
 <meta name="description" content="MIVA Knowledge Vector Space — 3D galaxy of university knowledge.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0e27'/><text x='16' y='23' text-anchor='middle' fill='%23E43B31' font-size='20' font-weight='bold'>M</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* V-07: self-hosted Inter (was fonts.googleapis.com) */
+@font-face{font-display:swap;font-family:'Inter';font-style:normal;font-weight:300;src:url('fonts/inter-v20-latin-300.woff2') format('woff2')}
+@font-face{font-display:swap;font-family:'Inter';font-style:normal;font-weight:400;src:url('fonts/inter-v20-latin-regular.woff2') format('woff2')}
+@font-face{font-display:swap;font-family:'Inter';font-style:normal;font-weight:500;src:url('fonts/inter-v20-latin-500.woff2') format('woff2')}
+@font-face{font-display:swap;font-family:'Inter';font-style:normal;font-weight:600;src:url('fonts/inter-v20-latin-600.woff2') format('woff2')}
+@font-face{font-display:swap;font-family:'Inter';font-style:normal;font-weight:700;src:url('fonts/inter-v20-latin-700.woff2') format('woff2')}
+@font-face{font-display:swap;font-family:'Inter';font-style:normal;font-weight:800;src:url('fonts/inter-v20-latin-800.woff2') format('woff2')}
 :root{--bg:#030510;--bg2:#0a0e27;--bg3:#0f1535;--primary:#E43B31;--gold:#FFB800;--text:#fff;--text-dim:rgba(255,255,255,.55);--glass:rgba(10,14,39,.88);--glass-border:rgba(255,255,255,.08);--radius:12px;--radius-sm:8px;--shadow:0 8px 32px rgba(0,0,0,.5)}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh;width:100vw}

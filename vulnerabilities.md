@@ -11,13 +11,13 @@
 
 | ID | Severity | Status | Title |
 |---|---|---|---|
-| V-01 | **Critical** | Mitigated in code — action required | Firebase API key hardcoded in source |
+| V-01 | **Critical** | Mitigated — rotation declined (accepted risk) | Firebase API key hardcoded in source |
 | V-02 | **Critical** | Fixed | XSS via `javascript:` URL in markdown link renderer |
 | V-03 | **High** | Fixed | XSS via innerHTML injection in auth UI |
 | V-04 | **High** | Fixed | External links missing `rel="noopener noreferrer"` (tabnapping) |
 | V-05 | **High** | Fixed | No URL protocol validation on user-supplied links |
 | V-06 | **High** | Fixed | `window._fb` exposes Firebase SDK to global scope |
-| V-07 | **Medium** | Open | No Subresource Integrity (SRI) on CDN assets |
+| V-07 | **Medium** | Fixed | No Subresource Integrity (SRI) on CDN assets |
 | V-08 | **Medium** | Fixed | Incomplete Content Security Policy |
 | V-09 | **Medium** | Fixed | Sensitive data cached in localStorage without sanitization |
 | V-10 | **Medium** | Fixed | Tag fields stored without HTML sanitization |
@@ -33,15 +33,13 @@
 ## V-01 — Firebase API Key Hardcoded in Source
 
 **Severity:** Critical
-**Status:** Mitigated in code — manual action still required
+**Status:** Mitigated — rotation declined (accepted risk, project owner decision 2026-07-01)
 **File:** `index.html`, line 287 (`fbConfig`)
 **OWASP:** A02:2021 Cryptographic Failures
 
-**Resolution note (2026-07-01):** `fbConfig` in `index.html` now ships with `YOUR_*` placeholder values only — no live key is committed, and Firebase initialization is skipped entirely (`if(!fbConfig.apiKey.startsWith('YOUR'))`) until a real config is filled in locally/at deploy time. Firebase web config is not a secret by design (Google's own guidance), so the actual security boundary is HTTP-referrer restriction + Firestore rules + App Check, not hiding the value — no build-time env-var injection was added (decision: keep placeholders, restrict by domain).
-**Still required (outside this repo, action item for the project owner):**
-1. The previously-committed live key (`AIzaSyBld8IlC0Cgs9b98mAQ8gDIf35snNcaqd8` / project `pdf-scraper-ext`) is still present in earlier git history and must be **rotated and revoked** in Google Cloud Console — removing it from the current file does not remove it from history.
-2. Restrict the new key to production HTTP referrers in Google Cloud Console.
-3. Confirm Firestore App Check enforcement is active (see README.md's App Check section).
+**Resolution note (2026-07-01):** `fbConfig` in `index.html` ships with `YOUR_*` placeholder values only — no live key is committed, and Firebase initialization is skipped entirely (`if(!fbConfig.apiKey.startsWith('YOUR'))`) until a real config is filled in locally/at deploy time. Firebase web config is not a secret by design (Google's own guidance) — the real security boundary is HTTP-referrer restriction + Firestore rules + App Check, not hiding the value. No build-time env-var injection was added (decision: keep placeholders, restrict by domain).
+
+**Decision:** The project owner has decided **not** to rotate the previously-committed live key (`AIzaSyBld8IlC0Cgs9b98mAQ8gDIf35snNcaqd8` / project `pdf-scraper-ext`), which remains in earlier git history. This is accepted as long as the key is given an **HTTP-referrer restriction** in Google Cloud Console (limits it to the production domain) — restriction closes the ongoing exposure; it does not undo any use that may have already happened while the key was unrestricted. Firestore rules are now hardened (see below) and App Check is **not yet enforced** (`recKey` in `index.html` is still the `'YOUR_RECAPTCHA_KEY'` placeholder — see the App Check section in README.md to complete it).
 
 **Description:**  
 The live Firebase project's API key, project ID, auth domain, storage bucket, messaging sender ID, app ID, and measurement ID are all hardcoded in plaintext inside the HTML source. Anyone who views page source has full access to these credentials.
@@ -254,11 +252,11 @@ Keep all Firebase references module-scoped (they already are in `hh.html`'s `<sc
 ## V-07 — No Subresource Integrity (SRI) on CDN Assets
 
 **Severity:** Medium
-**Status:** Open
-**File:** `index.html`, line 11 (`<head>`)
+**Status:** Fixed
+**File:** `index.html`, `<style>` block (`@font-face` rules) and CSP `<meta>` (line 7)
 **OWASP:** A08:2021 Software and Data Integrity Failures
 
-**Resolution note (2026-07-01):** Not yet fixed. `index.html` still loads `https://fonts.googleapis.com/css2?family=Inter...`. This was attempted during the 2026-07-01 pass but the fix requires downloading the Inter `.woff2` files to self-host, and the environment doing the fix had no outbound network access to fetch them. **To complete:** download the Inter woff2 files (weights 300/400/500/600/700/800) from Google Fonts, place them under a local `fonts/` directory, add an `@font-face` block in the `<style>` referencing `url('fonts/...')`, remove the `<link>` to `fonts.googleapis.com`, and tighten the CSP's `style-src`/`font-src` to drop the `fonts.googleapis.com`/`fonts.gstatic.com` allowances once nothing external is loaded.
+**Resolution note (2026-07-01):** Inter is now self-hosted. The `<link href="https://fonts.googleapis.com/...">` tag was removed and replaced with six `@font-face` rules (weights 300/400/500/600/700/800) pointing at `fonts/inter-v20-latin-*.woff2`, generated via google-webfonts-helper and committed under `fonts/`. The CSP's `style-src`/`font-src` no longer allowlist `fonts.googleapis.com`/`fonts.gstatic.com` — both are `'self'`-only now. Verified in-browser: all six `.woff2` requests return `200` from the local origin, no CSP violations, no requests to Google's font CDN.
 
 **Description:**  
 Google Fonts is loaded without an SRI hash:
@@ -570,7 +568,7 @@ if (DEBUG) console.warn('Firebase not configured:', e);
 
 ## Firestore Security Rules — Current vs Recommended
 
-**Status:** Fixed (2026-07-01) — README.md now documents the hardened rules below instead of the bare `allow create: if request.auth != null`. This is a documentation change only; **you must still paste the hardened rules into Firebase Console → Firestore Database → Rules** for them to take effect — updating README.md does not deploy anything.
+**Status:** Fixed and deployed (2026-07-01) — README.md documents the hardened rules below, and the project owner has confirmed they were pasted into Firebase Console → Firestore Database → Rules and are live.
 
 **Previous rules (superseded):**
 ```
@@ -615,11 +613,10 @@ This adds:
 
 ## Remediation Priority Order
 
-**Status as of 2026-07-01:** 15 of 16 code findings are fixed in `index.html`; the Firestore rules doc is updated. Two action items remain, both outside what a code change alone can close:
+**Status as of 2026-07-01:** All 16 code/doc findings are closed (fixed, or accepted risk with a documented reason). One follow-up remains:
 
-1. **V-01** — Rotate the previously-committed live Firebase key in Google Cloud Console and restrict the new key to production HTTP referrers. *(Code side is done — placeholders only, no live key committed.)*
-2. **Firestore rules** — Paste the hardened rules (see above) into Firebase Console → Firestore Database → Rules. *(README.md documents them; they are not deployed by editing README.md.)*
-3. **V-07** — Self-host the Inter font: download the `.woff2` files, add an `@font-face` block, remove the `fonts.googleapis.com` `<link>`, tighten CSP `style-src`/`font-src` to `'self'` only. *(Blocked in the environment that did this pass — no outbound network access to fetch the font files; needs to be done somewhere with internet access.)*
+1. **App Check** — not yet enforced. `recKey` in `index.html` is still the `'YOUR_RECAPTCHA_KEY'` placeholder, so `initializeAppCheck(...)` never runs. Register a reCAPTCHA v3 site key (see README.md's App Check section) and drop it in to close this out.
+2. **V-01** — accepted risk. The project owner declined to rotate the previously-committed live Firebase key; mitigation relies on restricting that key to production HTTP referrers in Google Cloud Console instead (not verifiable from this repo — confirm it's set).
 
 ### Already fixed (for reference)
-V-02, V-03, V-04, V-05, V-06, V-08, V-09, V-10, V-11, V-12, V-13, V-14, V-15, V-16 — see each finding's "Resolution note" above for the specific file/line.
+V-02 through V-16 — see each finding's "Resolution note" above for the specific file/line. Firestore rules are hardened in README.md and confirmed deployed to Firebase Console.

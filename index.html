@@ -290,12 +290,12 @@ canvas#main-canvas.grabbing{cursor:grabbing}
 let firebaseApp=null,auth=null,db=null,firebaseReady=false;
 // Replace YOUR_* values with your Firebase project config to enable live mode
 const fbConfig={
-  apiKey:'YOUR_API_KEY',
-  authDomain:'YOUR_AUTH_DOMAIN',
-  projectId:'YOUR_PROJECT_ID',
-  storageBucket:'YOUR_STORAGE_BUCKET',
-  messagingSenderId:'YOUR_MESSAGING_SENDER_ID',
-  appId:'YOUR_APP_ID'
+  apiKey:'AIzaSyBld8IlC0Cgs9b98mAQ8gDIf35snNcaqd8',
+  authDomain:'pdf-scraper-ext.firebaseapp.com',
+  projectId:'pdf-scraper-ext',
+  storageBucket:'pdf-scraper-ext.firebasestorage.app',
+  messagingSenderId:'1001266216982',
+  appId:'1:1001266216982:web:1bbe70117bb1ce1cc3b537'
 };
 // Module-scoped Firebase refs — NOT on window (V-06 fix)
 let _createUser,_signIn,_signOut,_onAuthChanged,_collection,_getDocs,_addDoc;
@@ -316,7 +316,7 @@ try{
     _collection=collection;
     _getDocs=getDocs;
     _addDoc=addDoc;
-    const recKey='YOUR_RECAPTCHA_KEY';
+    const recKey='6LckiR8tAAAAAIBYN6zJeSsTvTRswS6j2xs3CVb3';
     if(!recKey.startsWith('YOUR')){
       initializeAppCheck(firebaseApp,{provider:new ReCaptchaV3Provider(recKey),isTokenAutoRefreshEnabled:true});
     }

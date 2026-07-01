@@ -284,6 +284,10 @@ Self-host the Inter font (preferred for a university intranet tool), or add an S
 
 **Resolution note (2026-07-01):** The CSP now sets `default-src 'self'`, scoped `script-src`/`style-src`/`font-src`/`connect-src`/`img-src` allowlists, plus `object-src 'none'`, `base-uri 'self'`, and `form-action 'self'` in addition to the original `frame-ancestors 'none'`.
 
+**Follow-up fixes from live testing (2026-07-01), after wiring in real Firebase/reCAPTCHA credentials and running Lighthouse against the deployed `https://miva-vector-space.vercel.app/`:**
+1. **Missing `frame-src` broke App Check.** With no `frame-src` directive, `default-src 'self'` blocked reCAPTCHA's hidden iframe (`Framing 'https://www.google.com/' violates ... "default-src 'self'"`), which would have silently prevented App Check from ever getting a valid attestation token once enforcement is turned on. Added `frame-src https://www.google.com https://www.gstatic.com https://www.grecaptcha.net https://recaptcha.net;`. Verified: the reCAPTCHA `api2/anchor` iframe now loads (`200`) and Firestore `Listen/channel` requests succeed.
+2. **`frame-ancestors` does not work via `<meta>`.** Per the CSP spec, `frame-ancestors` (along with `report-uri`/`sandbox`) is only enforced when delivered as an HTTP response header — browsers silently ignore it in a `<meta>` tag (Chrome logs "the 'frame-ancestors' directive is ignored when delivered via a meta element"). This means the clickjacking protection was actually resting entirely on the JS frame-buster script (`if(self!==top){top.location=self.location}`), not the CSP. **Fixed** by adding `vercel.json` with a `headers` block that serves the same CSP plus `X-Frame-Options: DENY` as real HTTP headers on every route — `frame-ancestors` is now actually enforced by the browser, with the JS frame-buster as a defense-in-depth backstop for browsers that don't support it.
+
 **Description:**  
 Current CSP: `content="frame-ancestors 'none';"` — this is the entirety of the policy. It only prevents framing. It does not restrict:
 - `script-src` (any inline or external script executes)
@@ -563,6 +567,12 @@ Remove `console.warn`/`console.log` calls from production code, or gate them beh
 const DEBUG = false; // set true during development only
 if (DEBUG) console.warn('Firebase not configured:', e);
 ```
+
+---
+
+## Non-Security Bug Found During Live Verification (2026-07-01)
+
+**Not a vulnerability, but caught while testing the fixes above against the live Vercel deployment:** the header logo `<img id="logo-vector">` in `index.html` had a base64 `data:image/png` payload truncated by exactly one character, breaking base64 padding and making the browser reject the URL outright (`net::ERR_INVALID_URL`). The identical (correct, 872-char) string was already present for the loading-screen logo (`#barrier-logo`) a few lines earlier — the header copy was simply missing its last character. Fixed by replacing it with the correct string; both now decode and render identically.
 
 ---
 

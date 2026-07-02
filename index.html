@@ -450,15 +450,20 @@ function buildGalaxy(){
     else bycat[e.category]=[e];
   });
   S.planets=[];
+  const GOLDEN=Math.PI*(3-Math.sqrt(5)); // golden angle — even point distribution
   S.suns.forEach((sun,si)=>{
     (bycat[sun.cat]||[]).forEach((entry,j)=>{
-      const layer=Math.floor(j/6), posInLayer=j%6;
-      const slots=Math.min(6,(bycat[sun.cat]||[]).length-layer*6);
-      const orbitR=75+(layer*45)+(si*8)%30;
-      const baseAngle=(posInLayer/slots)*Math.PI*2+(si*.7);
+      // Fibonacci-sphere scatter in shells of 8: real 3D spread around the sun
+      // (a "vector space" point cloud) instead of a flat, coplanar orbit ring.
+      const shell=Math.floor(j/8), posInShell=j%8;
+      const shellCount=Math.min(8,(bycat[sun.cat]||[]).length-shell*8);
+      const elevFrac=shellCount<=1?0:1-(posInShell/(shellCount-1))*2; // -1..1
+      const ringFrac=Math.sqrt(Math.max(0,1-elevFrac*elevFrac));
+      const baseAngle=posInShell*GOLDEN+si*.7;
+      const orbitR=95+(shell*55)+(si*8)%30;
       S.planets.push({
         data:entry, cat:sun.cat, sun,
-        orbitR, angle:baseAngle,
+        orbitR, elevFrac, ringFrac, angle:baseAngle,
         orbSpeed:(.003+j*.0004)*(j%2===0?1:-1),
         r:Math.min(12,Math.max(5,4+entry.content.length/90)),
         color:sun.color,
@@ -640,9 +645,10 @@ function updateOrbitals(){
     // System view: promoted planets orbit the origin (their sun is now the centre)
     for(const pl of S.planets.filter(p=>p.sun===sv.sun)){
       pl.angle+=pl.orbSpeed*.4; // slower, more majestic
-      pl.x=Math.cos(pl.angle)*pl.orbitR;
-      pl.z=Math.sin(pl.angle)*pl.orbitR;
-      pl.y=Math.sin(pl.angle)*pl.orbitR*.12;
+      const hr=pl.orbitR*pl.ringFrac;
+      pl.x=Math.cos(pl.angle)*hr;
+      pl.z=Math.sin(pl.angle)*hr;
+      pl.y=pl.elevFrac*pl.orbitR*.85;
       const pp=project(pl.x,pl.y,pl.z);
       pl.sx=pp.sx;pl.sy=pp.sy;pl.scale=pp.scale;pl.depth=pp.depth;
     }
@@ -660,9 +666,10 @@ function updateOrbitals(){
   for(const pl of S.planets){
     if(!sv)pl.angle+=pl.orbSpeed;
     const sun=pl.sun;
-    pl.x=sun.x+Math.cos(pl.angle)*pl.orbitR;
-    pl.z=sun.z+Math.sin(pl.angle)*pl.orbitR;
-    pl.y=sun.y+Math.sin(pl.angle)*pl.orbitR*.12;
+    const hr=pl.orbitR*pl.ringFrac;
+    pl.x=sun.x+Math.cos(pl.angle)*hr;
+    pl.z=sun.z+Math.sin(pl.angle)*hr;
+    pl.y=sun.y+pl.elevFrac*pl.orbitR*.85;
     const pp=project(pl.x,pl.y,pl.z);
     pl.sx=pp.sx;pl.sy=pp.sy;pl.scale=pp.scale;pl.depth=pp.depth;
   }
@@ -692,12 +699,16 @@ function renderGalaxy(ghost=false){
   }
   // Black hole
   drawBlackHole(ghost);
-  // Planet orbit rings per sun
-  for(const sun of S.suns){
+  // Vector stems — thin line from each sun to its planets, i.e. each entry
+  // drawn as a literal vector from its category origin (the "vector space" look)
+  for(const pl of S.planets){
+    if(Date.now()<pl.spawnT)continue;
+    const sun=pl.sun;
     if(focusSun&&sun!==focusSun)continue;
-    const radii=[...new Set(S.planets.filter(p=>p.cat===sun.cat).map(p=>p.orbitR))];
-    const ringAlpha=focusSun&&sun===focusSun?'28':'18';
-    for(const radius of radii)drawOrbitRing(sun.x,sun.y,sun.z,radius,48,sun.color+(ghost?'10':ringAlpha),ghost?.3:.45);
+    const dimmed=S.query.length>0&&!pl.match;
+    const stemAlpha=ghost?'0c':dimmed?'08':focusSun?'22':'16';
+    ctx.strokeStyle=sun.color+stemAlpha;ctx.lineWidth=ghost?.3:.6;
+    ctx.beginPath();ctx.moveTo(sun.sx,sun.sy);ctx.lineTo(pl.sx,pl.sy);ctx.stroke();
   }
   // Depth-sort bodies
   const bodies=[
@@ -944,9 +955,13 @@ function renderSystemView(sv){
     ctx.beginPath();ctx.arc(pp.sx,pp.sy,Math.max(.3,s.r*pp.scale),0,Math.PI*2);ctx.fill();
   }
   ctx.globalAlpha=1;
-  // Orbit rings around origin
-  const radii=[...new Set(focusPlanets.map(p=>p.orbitR))];
-  for(const radius of radii)drawOrbitRing(0,0,0,radius,64,sun.color+'22',.55);
+  // Vector stems from the system centre to each promoted planet
+  const origin=project(0,0,0);
+  for(const pl of focusPlanets){
+    if(Date.now()<pl.spawnT)continue;
+    ctx.strokeStyle=sun.color+'2a';ctx.lineWidth=.7;
+    ctx.beginPath();ctx.moveTo(origin.sx,origin.sy);ctx.lineTo(pl.sx,pl.sy);ctx.stroke();
+  }
   // System centre (the sun, now a black hole)
   drawSystemCenter(sv);
   // Promoted planets as suns — depth sorted
@@ -1007,14 +1022,16 @@ function loop(){
 /* ═══════════════════════════════════════════
    D18 — HIT TEST
    ═══════════════════════════════════════════ */
-function hitTest(mx,my){
+function hitTest(mx,my,touch=false){
+  // V-mobile-tap: touch gets a much larger minimum hit-radius (~WCAG 44px
+  // target) since fingers are far less precise than a mouse pointer.
   const sv=S.systemView;
   if(sv?.phase==='hold'){
     // In system view only test promoted planets (rendered larger)
     let best=null,bd=Infinity;
     for(const p of S.planets.filter(pl=>pl.sun===sv.sun)){
       if(Date.now()<p.spawnT)continue;
-      const r=Math.max(p.r*2.2*p.scale,18);
+      const r=Math.max(p.r*2.2*p.scale,touch?30:18);
       const d=Math.hypot(p.sx-mx,p.sy-my);
       if(d<r&&d<bd){best={type:'planet',obj:p};bd=d;}
     }
@@ -1024,12 +1041,12 @@ function hitTest(mx,my){
   for(const p of S.planets){
     if(Date.now()<p.spawnT)continue;
     const d=Math.hypot(p.sx-mx,p.sy-my);
-    if(d<Math.max(p.r*p.scale,10)&&d<bd){best={type:'planet',obj:p};bd=d;}
+    if(d<Math.max(p.r*p.scale,touch?24:10)&&d<bd){best={type:'planet',obj:p};bd=d;}
   }
   if(!best)for(const s of S.suns){
     if(Date.now()<s.spawnT)continue;
     const d=Math.hypot(s.sx-mx,s.sy-my);
-    if(d<Math.max(s.r*s.scale,14)&&d<bd){best={type:'sun',obj:s};bd=d;}
+    if(d<Math.max(s.r*s.scale,touch?32:14)&&d<bd){best={type:'sun',obj:s};bd=d;}
   }
   return best;
 }
@@ -1112,7 +1129,7 @@ canvas.addEventListener('touchmove',e=>{
 canvas.addEventListener('touchend',e=>{
   if(S.drag&&!S.drag.moved&&e.changedTouches.length){
     const t=e.changedTouches[0],r=canvas.getBoundingClientRect();
-    const hit=hitTest(t.clientX-r.left,t.clientY-r.top);
+    const hit=hitTest(t.clientX-r.left,t.clientY-r.top,true);
     const sv=S.systemView;
     if(sv?.phase==='hold'){
       if(hit?.type==='planet')showDetail(hit.obj);
